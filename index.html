@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLUEPRINT — Standard Model structure + scale descent to Planck</title>
+<style>
+  :root{
+    --bg:#070b12;--panel:#0d141f;--edge:#1c3048;--ink:#cfe2f2;--dim:#7794ad;--faint:#48637c;
+    --blue:#4aa8ff;--cyan:#22d3ee;--amber:#f5b942;--green:#4ade80;--red:#f87171;--violet:#a78bfa;
+    --quark:#4aa8ff;--lepton:#4ade80;--boson:#f5b942;--higgs:#a78bfa;
+    --mono:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:13px;line-height:1.5}
+  body{background-image:linear-gradient(rgba(28,48,72,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(28,48,72,.18) 1px,transparent 1px);background-size:26px 26px}
+  .wrap{max-width:1000px;margin:0 auto;padding:30px 22px 80px}
+  .titleblock{border:1.5px solid var(--edge);border-radius:4px;padding:14px 18px;margin-bottom:20px;background:var(--panel);display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px}
+  .titleblock .t{font-size:18px;font-weight:700;letter-spacing:.5px;color:#eaf4ff}
+  .titleblock .meta{font-size:10px;color:var(--faint);text-align:right;line-height:1.7}
+  .kick{font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--cyan)}
+  h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin:26px 0 12px;border-bottom:1px solid var(--edge);padding-bottom:6px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 16px;font-size:11px}
+  .legend span{display:flex;align-items:center;gap:6px;color:var(--dim)}
+  .sw{width:11px;height:11px;border-radius:2px}
+  /* particle grid */
+  .smtable{display:grid;grid-template-columns:46px repeat(3,1fr) 1.1fr;gap:7px;align-items:stretch}
+  .hdr{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:center;padding:4px;align-self:center}
+  .rowlbl{display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--cyan);writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.15em}
+  .cell{border:1px solid var(--edge);border-radius:5px;padding:8px 9px;background:var(--panel);position:relative;min-height:62px}
+  .cell .sym{font-size:17px;font-weight:700}
+  .cell .nm{font-size:9.5px;color:var(--dim);margin-top:1px}
+  .cell .ms{font-size:9px;color:var(--faint);margin-top:3px}
+  .cell.q .sym{color:var(--quark)} .cell.l .sym{color:var(--lepton)}
+  .cell.q{border-color:#1d3a5c} .cell.l{border-color:#1d4a32}
+  .colordots{position:absolute;top:6px;right:7px;display:flex;gap:3px}
+  .colordots i{width:6px;height:6px;border-radius:50%}
+  .bcell{border:1px solid var(--edge);border-radius:5px;padding:9px;background:var(--panel)}
+  .bcell .sym{font-size:16px;font-weight:700} .bcell.boson .sym{color:var(--boson)} .bcell.higgs .sym{color:var(--higgs)}
+  .bcell .nm{font-size:9.5px;color:var(--dim)} .bcell .ms{font-size:9px;color:var(--faint);margin-top:2px}
+  .bosonrow{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}
+  /* callout boxes for the 3s */
+  .threes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+  .three{border:1px dashed var(--cyan);border-radius:6px;padding:11px 12px;background:rgba(34,211,238,.04)}
+  .three .big{font-size:24px;font-weight:800;color:var(--cyan)} .three .lab{font-size:10px;color:var(--dim);margin-top:2px;line-height:1.45}
+  .three .lab b{color:var(--ink)}
+  /* scale ladder */
+  .ladder{position:relative;margin-top:8px;border-left:2px solid var(--edge);padding-left:0}
+  .rung{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:9px 0 9px 16px;border-bottom:1px dashed #14233505;position:relative}
+  .rung::before{content:'';position:absolute;left:-7px;top:16px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--blue)}
+  .rung.floor::before{border-color:var(--amber)} .rung.desert::before{border-color:var(--red);background:var(--red)} .rung.wall::before{border-color:var(--violet);background:var(--violet)}
+  .rung .scale{font-size:12px;color:var(--blue);font-weight:700}
+  .rung.floor .scale{color:var(--amber)} .rung.wall .scale{color:var(--violet)}
+  .rung .desc{font-size:11.5px;color:var(--dim);line-height:1.5}
+  .rung .desc b{color:var(--ink)}
+  .desertband{border:1px solid var(--red);border-radius:6px;background:repeating-linear-gradient(45deg,rgba(248,113,113,.05),rgba(248,113,113,.05) 8px,transparent 8px,transparent 16px);padding:12px 14px;margin:4px 0 4px 16px}
+  .desertband .h{color:var(--red);font-weight:700;font-size:12px;letter-spacing:.1em} .desertband .b{font-size:11px;color:var(--dim);margin-top:4px;line-height:1.55}
+  .desertband .b i{color:var(--amber);font-style:normal}
+  /* audit box */
+  .audit{border:1.5px solid var(--cyan);border-radius:6px;background:rgba(34,211,238,.05);padding:16px 18px;margin-top:24px;line-height:1.6;font-size:12.5px}
+  .audit .h{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+  .audit b{color:var(--ink)} .audit .v{font-weight:700;color:var(--amber)}
+  .note{font-size:11px;color:var(--faint);margin-top:8px;line-height:1.6}
+  .note b{color:var(--dim)}
+  footer{margin-top:28px;border-top:1px solid var(--edge);padding-top:12px;color:var(--faint);font-size:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="titleblock">
+  <div>
+    <div class="kick">technical blueprint · drawing no. SM-01</div>
+    <div class="t">STANDARD MODEL — STRUCTURE &amp; SCALE DESCENT</div>
+  </div>
+  <div class="meta">SCALE: 10⁻¹⁰ → 10⁻³⁵ m<br>PARTICLES: 17 fundamental types<br>VERIFIED: Node count-check pre-build<br>REV: pattern audit (3×3×3)</div>
+</div>
+
+<h2>Sheet 1 · Fermion matrix — read the real 3-fold structure</h2>
+<div class="legend">
+  <span><span class="sw" style="background:var(--quark)"></span> quark (feels strong force · carries color)</span>
+  <span><span class="sw" style="background:var(--lepton)"></span> lepton (colorless)</span>
+  <span><span class="sw" style="background:var(--red)"></span><span class="sw" style="background:var(--green)"></span><span class="sw" style="background:var(--blue)"></span> the 3 quark colors (SU(3))</span>
+</div>
+
+<div class="smtable">
+  <div class="hdr"></div>
+  <div class="hdr">↑ up-type quark</div>
+  <div class="hdr">↓ down-type quark</div>
+  <div class="hdr">charged lepton</div>
+  <div class="hdr">neutrino</div>
+
+  <!-- GEN I -->
+  <div class="rowlbl">GEN&nbsp;I</div>
+  <div class="cell q"><div class="colordots"><i style="background:var(--red)"></i><i style="background:var(--green)"></i><i style="background:var(--blue)"></i></div><div class="sym">u</div><div class="nm">up</div><div class="ms">2.2 MeV</div></div>
+  <div class="cell q"><div class="colordots"><i style="background:var(--red)"></i><i style="background:var(--green)"></i><i style="background:var(--blue)"></i></div><div class="sym">d</div><div class="nm">down</div><div class="ms">4.7 MeV</div></div>
+  <div class="cell l"><div class="sym">e</div><div class="nm">electron</div><div class="ms">0.511 MeV</div></div>
+  <div class="cell l"><div class="sym">νₑ</div><div class="nm">e-neutrino</div><div class="ms">&lt;0.1 eV</div></div>
+
+  <!-- GEN II -->
+  <div class="rowlbl">GEN&nbsp;II</div>
+  <div class="cell q"><div class="colordots"><i style="background:var(--red)"></i><i style="background:var(--green)"></i><i style="background:var(--blue)"></i></div><div class="sym">c</div><div class="nm">charm</div><div class="ms">1.27 GeV</div></div>
+  <div class="cell q"><div class="colordots"><i style="background:var(--red)"></i><i style="background:var(--green)"></i><i style="background:var(--blue)"></i></div><div class="sym">s</div><div class="nm">strange</div><div class="ms">95 MeV</div></div>
+  <div class="cell l"><div class="sym">μ</div><div class="nm">muon</div><div class="ms">106 MeV</div></div>
+  <div class="cell l"><div class="sym">ν_μ</div><div class="nm">mu-neutrino</div><div class="ms">&lt;0.1 eV</div></div>
+
+  <!-- GEN III -->
+  <div class="rowlbl">GEN&nbsp;III</div>
+  <div class="cell q"><div class="colordots"><i style="background:var(--red)"></i><i style="background:var(--green)"></i><i style="background:var(--blue)"></i></div><div class="sym">t</div><div class="nm">top</div><div class="ms">173 GeV</div></div>
+  <div class="cell q"><div class="colordots"><i style="background:var(--red)"></i><i style="background:var(--green)"></i><i style="background:var(--blue)"></i></div><div class="sym">b</div><div class="nm">bottom</div><div class="ms">4.18 GeV</div></div>
+  <div class="cell l"><div class="sym">τ</div><div class="nm">tau</div><div class="ms">1.78 GeV</div></div>
+  <div class="cell l"><div class="sym">ν_τ</div><div class="nm">tau-neutrino</div><div class="ms">&lt;0.1 eV</div></div>
+</div>
+
+<h2>Sheet 2 · Bosons — force carriers</h2>
+<div class="bosonrow">
+  <div class="bcell boson"><div class="sym">γ</div><div class="nm">photon · EM force</div><div class="ms">massless · spin 1</div></div>
+  <div class="bcell boson"><div class="sym">g ×8</div><div class="nm">gluon · strong force</div><div class="ms">massless · 8 = 3²−1</div></div>
+  <div class="bcell boson"><div class="sym">W± Z</div><div class="nm">weak force</div><div class="ms">80 / 91 GeV · spin 1</div></div>
+  <div class="bcell higgs"><div class="sym">H</div><div class="nm">Higgs · mass field</div><div class="ms">125 GeV · spin 0</div></div>
+</div>
+
+<h2>Sheet 3 · The 3-fold structure you're hunting — where it's REAL</h2>
+<div class="threes">
+  <div class="three"><div class="big">3</div><div class="lab"><b>generations</b> (the 3 rows). The deep one — nobody knows <i>why</i> three. Rabi on the 2nd: "who ordered that?" Genuinely unexplained.</div></div>
+  <div class="three"><div class="big">3</div><div class="lab"><b>colors</b> per quark (red/green/blue). The SU(3) of the strong force. Every quark cell above carries all 3 dots.</div></div>
+  <div class="three"><div class="big">8</div><div class="lab"><b>gluons</b> = 3²−1. The color force-carriers, genuinely tied to the 3 via the math of SU(3).</div></div>
+</div>
+
+<div class="audit">
+  <div class="h">⟐ Pattern Audit — is there a fundamental 3×3×3 = 27?</div>
+  <b>Claim:</b> "the particles form a 3×3×3 = 27 pattern." &nbsp; <span class="v">VERDICT: NO — but two real 3s, yes.</span><br><br>
+  Worked from the verified count: the quark sector is <b>3 generations × 2 type × 3 color = 18</b>, not 27 — the
+  middle factor is <b>2</b> (up-type / down-type), not 3, so it doesn't cube. There is no clean 27-particle structure.
+  What's <i>actually</i> there: <b>3 appears twice</b> — 3 generations (rows) and 3 colors (depth) — plus 8 = 3²−1
+  gluons. So a real <b>3×3 grid</b> exists (generation × color, 9 quark cells, each holding an up/down pair), and "3"
+  is one of the deepest facts in physics — but stacking it to 3×3×3 is the costume move: forcing a third 3 that the
+  count doesn't contain. Two genuine 3s beat one invented 27.
+  <div class="note"><b>The honest read:</b> the "why 3 generations" question is a real open problem at the frontier — a
+  genuine triple no one can explain. That's the pattern worth chasing. The 27 isn't there; the unexplained 3 is, and
+  it's better, because it's real <i>and</i> mysterious.</div>
+</div>
+
+<h2>Sheet 4 · Scale descent — where the particles sit, down to your 10⁻³⁵</h2>
+<div class="ladder">
+  <div class="rung"><div class="scale">~10⁻¹⁰ m</div><div class="desc"><b>the atom</b> — electron cloud around nucleus</div></div>
+  <div class="rung"><div class="scale">~10⁻¹⁵ m</div><div class="desc"><b>nucleus / proton</b> (~0.84 fm) — a bag of quarks + gluons (composite, not fundamental)</div></div>
+  <div class="rung floor"><div class="scale">~10⁻¹⁸ m</div><div class="desc"><b>quarks &amp; electrons — point-like, NO size detected.</b> The resolution floor: the smallest distance the LHC can probe. <i>Everything we've ever witnessed stops here.</i></div></div>
+  <div class="desertband"><div class="h">⌖ THE DESERT — 10⁻¹⁸ … 10⁻³⁵ m</div><div class="b">~16 orders of magnitude with <i>nothing confirmed.</i> Every inhabitant is a <i>proposal</i>, un-witnessed: <b>preons</b> (bits inside quarks?), <b>SUSY partners</b>, <b>strings</b> (~10⁻³⁴ m), the <b>graviton</b> (spin-2 gravity carrier, never found). This is the "dark, not done" zone — un-probed, so populated only by candidates standing at the forks. No experiment has reached here.</div></div>
+  <div class="rung wall"><div class="scale">1.6×10⁻³⁵ m</div><div class="desc"><b>the Planck length — the floor.</b> Below it "length" itself may stop meaning anything; you'd need quantum gravity (which we don't have). The witness wall. Your 10⁻³⁵ <i>is</i> this wall.</div></div>
+</div>
+
+<div class="note" style="margin-top:14px"><b>Summary:</b> 17 fundamental particle types, all point-like, all sitting at
+the ~10⁻¹⁸ m resolution floor. The scale keeps descending 16 more orders to the Planck wall at 10⁻³⁵ — but through
+empty witnessed-territory (the desert), inhabited only by un-prunable candidates. The particles run out long before the
+scale does.</div>
+
+<footer>
+  BLUEPRINT SM-01 · Standard Model structure + scale descent · counts verified in Node before build<br>
+  REAL triples: 3 generations · 3 colors · 8=3²−1 gluons · 3×3 grid genuine · 3×3×3=27 audited FALSE (quark middle factor is 2)<br>
+  17 fundamental types · point-like · floor ~10⁻¹⁸ m · desert · Planck wall 1.6×10⁻³⁵ m · the particles end where the witness ends
+</footer>
+
+</div>
+</body>
+</html>

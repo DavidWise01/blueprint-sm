@@ -1,9 +1,9 @@
 ROOT0-DLW-CHAIN-v1
 index : 1099
 slug  : blueprint-sm
-seal  : 70bc99145fe9426534a845d5fe45ba482a6d774ef75d3e3501df46ce4a2d3de6
-prev  : 63f72ef498a116879cda63b28cc1ffbacb8b7d2b9234674d1980375593f4e84e
-link  : c02bb4b9525fdc33569d6f3611caae87c7202603dc9f96895c0b947a7981260f
-head  : f7444724835fd968bd2eac85811f9fa823a18d20a57907b4fade8d96b70b5409
+seal  : b3fe6fa5da7b501328af62646a2080a5625d405cb4c9bbab2b4a9f38030242ac
+prev  : cee5b79dc930dd70c1d2cce1b900e9e91bb284213b91fb4d8d6eab6c0e4d2df1
+link  : 77b602350ff3149ae88e5aaf580525c78d486aa52f7b66e61e48c90ec5f9ccab
+head  : c4d41afeaef76470528856d54d86cf480a0e1c2fc8ebc60fbb9eb8e442585f2b
 
 — the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
